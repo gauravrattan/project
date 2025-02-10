@@ -1,0 +1,57 @@
+- name: Ensure required packages are installed
+  apt:
+    name:
+      - python3-pip
+      - acl
+    state: present
+    update_cache: true
+  become: true
+
+- name: Ensure psycopg2 is installed
+  apt:
+    name: python3-psycopg2
+    state: present
+    update_cache: true
+  become: true
+
+- name: Ensure standby_ips is initialized
+  set_fact:
+    standby_ips: []
+
+- name: Set fact for standby private IPs
+  set_fact:
+    standby_ips: "{{ standby_ips | default([]) + [hostvars[item].private_ip_address] }}"
+  loop: "{{ groups['env_worker'] | default([]) }}"
+  when: "'hosts_postgres_master' in group_names"
+
+- name: Debug standby IPs to ensure they are set
+  debug:
+    msg: "Standby IPs: {{ standby_ips }}"
+  when: "'hosts_postgres_master' in group_names"
+
+
+- name: Allow replication user access in pg_hba.conf
+  lineinfile:
+    path: "/etc/postgresql/{{ postgresql_version }}/main/pg_hba.conf"
+    line: "host replication {{ replica_user_name }} {{ item }}/32 scram-sha-256"
+    state: present
+  loop: "{{ standby_ips }}"
+  when: "'hosts_postgres_master' in group_names"
+
+- name: Create replication user
+  postgresql_user:
+    name: "{{ replica_user_name }}"
+    password: "{{ replica_password }}"
+    role_attr_flags: "LOGIN,REPLICATION"
+    state: present
+  become: true
+  become_user: postgres
+  become_method: sudo
+  when: "'hosts_postgres_master' in group_names"
+
+- name: Restart PostgreSQL to apply changes
+  systemd:
+    name: postgresql
+    state: restarted
+  become: true
+  when: "'hosts_postgres_master' in group_names"
