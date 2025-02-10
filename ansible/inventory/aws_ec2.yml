@@ -1,0 +1,25 @@
+plugin: amazon.aws.aws_ec2
+
+regions:
+  - ap-southeast-1  # AWS region
+
+hostnames:
+  - instance-id  # Use instance ID as the hostname
+
+filters:
+  instance-state-name: running  # Only include running instances
+  "tag:Name":
+    - postgres-master       # Include only master node
+    - postgres-worker-*     # Automatically include all workers with 'postgres-worker-*'
+
+keyed_groups:
+  - key: tags.Name
+    prefix: hosts
+    include:
+      - postgres-master    # Master node
+      - postgres-worker-*  # Automatically group all workers
+
+  - key: tags.env
+    prefix: env
+    include:
+      - worker  # Include only worker nodes with env=worker
