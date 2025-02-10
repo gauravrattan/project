@@ -93,8 +93,6 @@ This Ansible setup automates the installation and configuration of **PostgreSQL 
 - **Secure Execution** – Runs through **AWS Session Manager** instead of direct SSH access, enhancing security.  
 - **Template-Based Configuration** – Uses **Jinja2 templates** to dynamically generate `postgresql.conf`.  
 
-
-
 # 🛠️ How to Run
 
 This guide provides step-by-step instructions to set up and execute Terraform and Ansible automation using Flask APIs.
@@ -167,6 +165,22 @@ curl -X POST http://127.0.0.1:5000/update-tfvars \
 
 ---
 
+## 🔧 Configure PostgreSQL Settings (Ansible API)
+
+### 9️⃣ Setup PostgreSQL Configuration
+Configure PostgreSQL settings dynamically using the Ansible API.
+```sh
+curl -X POST http://127.0.0.1:5000/setup-config \  
+     -H "Content-Type: application/json" \  
+     -d '{
+           "postgres_version": "15",
+           "max_connections": "200",
+           "shared_buffers": "512MB"
+         }'
+```
+
+---
+
 ## ✅ Verification
 - Verify resources on **AWS Console**.
 - Check the Terraform state file (`terraform.tfstate`) to confirm applied infrastructure changes.
@@ -184,15 +198,21 @@ curl -X POST http://127.0.0.1:5000/update-tfvars \
 | **Terraform Plan**         | `curl -X POST http://127.0.0.1:5000/terraform-plan` |
 | **Terraform Apply**        | `curl -X POST http://127.0.0.1:5000/terraform-apply` |
 | **Update Instance Type & Replicas** | `curl -X POST http://127.0.0.1:5000/update-tfvars -H "Content-Type: application/json" -d '{ "postgres_worker_replicas": 5, "instance_type": "t3.large" }'` |
+| **Setup PostgreSQL Configuration** | `curl -X POST http://127.0.0.1:5000/setup-config -H "Content-Type: application/json" -d '{ "postgres_version": "15", "max_connections": "200", "shared_buffers": "512MB" }'` |
 
 ---
 
-## 🏁 Next Steps
-- ✅ **Monitor Logs** – Check Flask server logs to debug any issues.
-- ✅ **Run Ansible Playbooks** – Execute additional configurations if needed.
-- ✅ **Enhance Security** – Implement authentication for API endpoints.
 
 This guide ensures a **smooth setup and execution** of Terraform & Ansible automation! 🚀
+
+
+
+
+
+
+
+
+
 
 
 
