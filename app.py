@@ -8,7 +8,7 @@ app = Flask(__name__)
 PROJECT_DIR = "."  
 BACKEND_DIR = "backend"  
 TFVARS_FILE = "terraform.tfvars" 
-ANSIBLE_DIR = "ansible-ssm"
+ANSIBLE_DIR = "ansible"
 def run_terraform_command(command, directory):
     try:
         result = subprocess.run(
