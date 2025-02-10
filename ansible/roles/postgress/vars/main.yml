@@ -1,0 +1,5 @@
+replica_user_name: "replica_user"
+replica_password: "asdfqwer"
+postgresql_version: "15"  
+shared_buffers: '154MB'  
+max_connections: 200
