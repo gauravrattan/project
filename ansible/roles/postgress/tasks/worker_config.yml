@@ -1,0 +1,57 @@
+- name: Get master private IP
+  set_fact:
+    master_ip: "{{ hostvars[groups['hosts_postgres_master'][0]].private_ip_address }}"
+  when: "'env_worker' in group_names"
+
+- name: Set PGPASSWORD environment variable
+  set_fact:
+    pgpassword: "{{ replica_password }}"
+  when: "'env_worker' in group_names"
+
+- name: Restore base backup from master server
+  block:
+    - name: Stop PostgreSQL service
+      systemd:
+        name: postgresql
+        state: stopped
+      become: true
+
+    - name: Backup existing PostgreSQL data directory
+      shell: |
+        mkdir -p /var/lib/postgresql/{{ postgresql_version }}/main_bak
+        cp -R /var/lib/postgresql/{{ postgresql_version }}/main/ /var/lib/postgresql/{{ postgresql_version }}/main_bak/
+        rm -rf /var/lib/postgresql/{{ postgresql_version }}/main/
+      become: true
+      become_user: postgres
+      when: "'env_worker' in group_names"
+
+- name: Ensure PostgreSQL is running on master
+  systemd:
+    name: postgresql
+    state: started
+  when: "'hosts_postgres_master' in group_names"
+
+- name: Run pg_basebackup to restore from master
+  command: >
+    pg_basebackup -h {{ master_ip }} -D /var/lib/postgresql/{{ postgresql_version }}/main/ -U {{ replica_user_name }} -v -P -R -X stream -C -S slaveslot{{ ansible_play_hosts.index(inventory_hostname) + 1 }}
+  become: true
+  become_user: postgres
+  environment:
+    PGPASSWORD: "{{ pgpassword }}"
+  when: "'env_worker' in group_names"
+
+- name: Update PostgreSQL configuration
+  lineinfile:
+    path: "/etc/postgresql/{{ postgresql_version }}/main/postgresql.conf"
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  loop:
+    - { regexp: '^#?hot_standby\s*=', line: "hot_standby = on" }  # Allow read-only queries on replica
+  when: "'env_worker' in group_names"
+
+- name: Restart PostgreSQL to apply changes
+  systemd:
+    name: postgresql
+    state: restarted
+  become: true
+  when: "'env_worker' in group_names"
