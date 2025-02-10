@@ -1,0 +1,5 @@
+---
+- include_tasks: install.yml
+- include_tasks: core_config.yml
+- include_tasks: master_config.yml 
+- include_tasks: worker_config.yml
