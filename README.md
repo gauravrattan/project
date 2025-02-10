@@ -95,6 +95,109 @@ This Ansible setup automates the installation and configuration of **PostgreSQL 
 
 
 
+# 🛠️ How to Run
+
+This guide provides step-by-step instructions to set up and execute Terraform and Ansible automation using Flask APIs.
+
+## 1️⃣ Clone the Repository
+Clone the project repository from GitHub and navigate into the project directory.
+```sh
+git clone https://github.com/gauravrattan/project.git
+cd project
+```
+
+## 2️⃣ Install Dependencies
+Install the required dependencies, including Flask.
+```sh
+pip install Flask
+```
+
+## 3️⃣ Start the API Server
+Run the Flask application to enable API-based automation.
+```sh
+python app.py
+```
+
+---
+
+## ⚡ Backend Initialization
+
+### 4️⃣ Initialize the Terraform Backend
+Before applying Terraform configurations, initialize the **S3 backend with DynamoDB** for state management.
+```sh
+curl -X POST http://127.0.0.1:5000/setup-backend
+```
+
+---
+
+## 🌍 Terraform Operations
+
+### 5️⃣ Initialize Terraform
+Initialize the Terraform working directory, download providers, and set up modules.
+```sh
+curl -X POST http://127.0.0.1:5000/terraform-init
+```
+
+### 6️⃣ Generate Terraform Plan
+Generate and display an execution plan before applying changes.
+```sh
+curl -X POST http://127.0.0.1:5000/terraform-plan
+```
+
+### 7️⃣ Apply Terraform Configuration
+Apply the Terraform configurations to provision the required AWS resources.
+```sh
+curl -X POST http://127.0.0.1:5000/terraform-apply
+```
+
+---
+
+## 🔄 Updating Terraform Variables
+
+### 8️⃣ Update Instance Type & Replicas
+Dynamically update Terraform variables such as **PostgreSQL replicas** and **EC2 instance type**.
+```sh
+curl -X POST http://127.0.0.1:5000/update-tfvars \  
+-H "Content-Type: application/json" \  
+-d '{
+  "postgres_worker_replicas": 5,
+  "instance_type": "t3.large"
+}'
+```
+
+---
+
+## ✅ Verification
+- Verify resources on **AWS Console**.
+- Check the Terraform state file (`terraform.tfstate`) to confirm applied infrastructure changes.
+- Ensure the **PostgreSQL cluster is running** with correct master and replica configurations.
+- Use **Ansible playbooks** if further configuration is required.
+
+---
+
+## 🎯 Summary of API Endpoints
+
+| Action                     | Command |
+|----------------------------|---------|
+| **Initialize Backend**      | `curl -X POST http://127.0.0.1:5000/setup-backend` |
+| **Terraform Init**         | `curl -X POST http://127.0.0.1:5000/terraform-init` |
+| **Terraform Plan**         | `curl -X POST http://127.0.0.1:5000/terraform-plan` |
+| **Terraform Apply**        | `curl -X POST http://127.0.0.1:5000/terraform-apply` |
+| **Update Instance Type & Replicas** | `curl -X POST http://127.0.0.1:5000/update-tfvars -H "Content-Type: application/json" -d '{ "postgres_worker_replicas": 5, "instance_type": "t3.large" }'` |
+
+---
+
+## 🏁 Next Steps
+- ✅ **Monitor Logs** – Check Flask server logs to debug any issues.
+- ✅ **Run Ansible Playbooks** – Execute additional configurations if needed.
+- ✅ **Enhance Security** – Implement authentication for API endpoints.
+
+This guide ensures a **smooth setup and execution** of Terraform & Ansible automation! 🚀
+
+
+
+
+
 
 
 
