@@ -203,7 +203,13 @@ curl -X POST http://127.0.0.1:5000/setup-config \
 ---
 
 
-This guide ensures a **smooth setup and execution** of Terraform & Ansible automation! 🚀
+## 🌟 Future Scope
+
+#### Use AWS Secrets Manager or Vault for secure password management.
+
+#### Implement Patroni for high availability in PostgreSQL clusters.
+
+#### Enhance Logging by adding detailed logs for better debugging and monitoring.
 
 
 
