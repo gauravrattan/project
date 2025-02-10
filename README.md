@@ -201,8 +201,14 @@ curl -X POST http://127.0.0.1:5000/setup-config \
 | **Setup PostgreSQL Configuration** | `curl -X POST http://127.0.0.1:5000/setup-config -H "Content-Type: application/json" -d '{ "postgres_version": "15", "max_connections": "200", "shared_buffers": "512MB" }'` |
 
 ---
+## 1. PostgreSQL Replication Setup
+This image shows the successful setup of PostgreSQL replication.
 
+![Alt text](images/replication.png)
 
+## 2. Ansible API Execution
+This image displays a successful API hit for Ansible automation.
+![Alt text](images/ansible.png)
 ## 🌟 Future Scope
 
 #### Use AWS Secrets Manager or Vault for secure password management.
@@ -210,6 +216,9 @@ curl -X POST http://127.0.0.1:5000/setup-config \
 #### Implement Patroni for high availability in PostgreSQL clusters.
 
 #### Enhance Logging by adding detailed logs for better debugging and monitoring.
+
+## Assumptions
+Basic knowledge of **AWS**, **Ansible**, **Terraform**, and **Python** is required.
 
 
 
