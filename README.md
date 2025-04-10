@@ -2,7 +2,7 @@
 
 ## Overview
 
-This Project provides an API that automates the setup of a PostgreSQL primary-read-replica architecture using Terraform and Ansible. The API allows users to configure key parameters such as PostgreSQL version, instance type, and number of replicas. It dynamically generates and applies Terraform configurations to provision AWS infrastructure and executes Ansible playbooks to install and configure PostgreSQL, ensuring seamless replication between the primary and replicas.
+This project provides an API that automates the setup of a PostgreSQL primary-read-replica architecture using Terraform and Ansible. The API allows users to configure key parameters such as PostgreSQL version, instance type, and number of replicas. It dynamically generates and applies Terraform configurations to provision AWS infrastructure and executes Ansible playbooks to install and configure PostgreSQL, ensuring seamless replication between the primary and replicas.
 
 ## Features
 
